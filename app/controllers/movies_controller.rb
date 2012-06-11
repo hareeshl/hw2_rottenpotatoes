@@ -17,7 +17,10 @@ class MoviesController < ApplicationController
 
   def index
 
-    @all_ratings = Movie.find(:all,:select =>"rating", :group=>:rating)
+    @all_ratings = Movie.find(:all,:select =>"rating", :group=>"rating")
+    @all_ratings.each do |m|
+      m.isChecked=false
+    end
     
     unless params[:ratings].nil?
       session[:selected_ratings] = params[:ratings]
@@ -29,7 +32,7 @@ class MoviesController < ApplicationController
       else
         @movies = Movie.find_all_by_rating(session[:selected_ratings].keys, :order=>'title').each do |movieWithRating|
           @all_ratings.each do |rating|
-            if rating == movieWithRating
+            if rating.rating == movieWithRating.rating
                 rating.isChecked = true
             end
           end  
@@ -41,7 +44,7 @@ class MoviesController < ApplicationController
       else
         @movies = Movie.find_all_by_rating(session[:selected_ratings].keys, :order=>'release_date').each do |movieWithRating|
           @all_ratings.each do |rating|
-            if rating == movieWithRating
+            if rating.rating == movieWithRating.rating
                 rating.isChecked = true
             end
           end 
@@ -54,7 +57,7 @@ class MoviesController < ApplicationController
        else
           @movies = Movie.find_all_by_rating(session[:selected_ratings].keys).each do |movieWithRating|
             @all_ratings.each do |rating|
-              if rating == movieWithRating
+              if rating.rating == movieWithRating.rating
                 rating.isChecked = true
               end
             end 

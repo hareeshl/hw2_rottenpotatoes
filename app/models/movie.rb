@@ -1,4 +1,4 @@
 class Movie < ActiveRecord::Base
   @isChecked
-  attr_accessor :isChecked 
+  attr_accessor :isChecked
 end
