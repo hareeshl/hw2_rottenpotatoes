@@ -16,10 +16,21 @@ class MoviesController < ApplicationController
   end
 
   def index
-
-    @all_ratings = Movie.find(:all,:select =>"rating", :group=>"rating")
-    @all_ratings.each do |m|
-      m.isChecked=false
+    
+    if params["format"] =~ /^filter$/
+      if params[:ratings].nil?
+        session[:isFilter] = true
+        session[:selected_ratings] = nil
+      else
+        session[:isFilter] = true
+      end
+    end
+    
+    if session[@all_ratings].nil?
+      session[@all_ratings] = Movie.find(:all,:select =>"rating", :group=>"rating")
+      session[@all_ratings].each do |m|
+        m.isChecked=false
+      end
     end
     
     unless params[:ratings].nil?
@@ -31,7 +42,7 @@ class MoviesController < ApplicationController
         @movies = Movie.find(:all,:order=>'title')
       else
         @movies = Movie.find_all_by_rating(session[:selected_ratings].keys, :order=>'title').each do |movieWithRating|
-          @all_ratings.each do |rating|
+          session[@all_ratings].each do |rating|
             if rating.rating == movieWithRating.rating
                 rating.isChecked = true
             end
@@ -43,7 +54,7 @@ class MoviesController < ApplicationController
         @movies = Movie.find(:all,:order=>'release_date')
       else
         @movies = Movie.find_all_by_rating(session[:selected_ratings].keys, :order=>'release_date').each do |movieWithRating|
-          @all_ratings.each do |rating|
+          session[@all_ratings].each do |rating|
             if rating.rating == movieWithRating.rating
                 rating.isChecked = true
             end
@@ -51,12 +62,22 @@ class MoviesController < ApplicationController
         end 
       end
     else
-       if params[:ratings].nil?
-          @movies = Movie.all
-          session[:selected_ratings] = nil
+       if session[:isFilter] == true
+          if params[:ratings].nil?
+            @movies = Movie.all
+            session[:selected_ratings] = nil
+          else
+            @movies = Movie.find_all_by_rating(session[:selected_ratings].keys).each do |movieWithRating|
+              session[@all_ratings].each do |rating|
+                if rating.rating == movieWithRating.rating
+                  rating.isChecked = true
+                end
+              end 
+            end
+          end
        else
           @movies = Movie.find_all_by_rating(session[:selected_ratings].keys).each do |movieWithRating|
-            @all_ratings.each do |rating|
+            session[@all_ratings].each do |rating|
               if rating.rating == movieWithRating.rating
                 rating.isChecked = true
               end
