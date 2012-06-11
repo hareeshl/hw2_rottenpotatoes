@@ -19,8 +19,7 @@ class MoviesController < ApplicationController
     
     if params["format"] =~ /^filter$/
       if params[:ratings].nil?
-        session[:isFilter] = true
-        session[:selected_ratings] = nil
+        session[:isFilter] = false
       else
         session[:isFilter] = true
       end
@@ -63,10 +62,6 @@ class MoviesController < ApplicationController
       end
     else
        if session[:isFilter] == true
-          if params[:ratings].nil?
-            @movies = Movie.all
-            session[:selected_ratings] = nil
-          else
             @movies = Movie.find_all_by_rating(session[:selected_ratings].keys).each do |movieWithRating|
               session[@all_ratings].each do |rating|
                 if rating.rating == movieWithRating.rating
@@ -74,15 +69,14 @@ class MoviesController < ApplicationController
                 end
               end 
             end
-          end
-       else
-          @movies = Movie.find_all_by_rating(session[:selected_ratings].keys).each do |movieWithRating|
-            session[@all_ratings].each do |rating|
-              if rating.rating == movieWithRating.rating
-                rating.isChecked = true
-              end
-            end 
-          end
+       else 
+          @movies = Movie.all.each do |movieWithRating|
+              session[@all_ratings].each do |rating|
+                if rating.rating == movieWithRating.rating
+                  rating.isChecked = false
+                end
+              end 
+            end
        end      
     end   
   end
