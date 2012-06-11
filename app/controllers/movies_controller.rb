@@ -5,10 +5,10 @@ class MoviesController < ApplicationController
     id = params[:id] 
     
     if id =~ /^title$/      
-      flash[:issorted] = 'title'  
+      session[:issorted] = 'title' 
       redirect_to movies_path
     elsif id =~ /^release_date$/
-      flash[:issorted] = 'release_date'     
+      session[:issorted] = 'release_date'
       redirect_to movies_path
     else
       @movie = Movie.find(id)    
@@ -36,7 +36,7 @@ class MoviesController < ApplicationController
       session[:selected_ratings] = params[:ratings]
     end
     
-    if flash[:issorted] =~ /^title$/ 
+    if session[:issorted] =~ /^title$/ 
       if session[:selected_ratings].nil?
         @movies = Movie.find(:all,:order=>'title')
       else
@@ -48,7 +48,7 @@ class MoviesController < ApplicationController
           end  
         end
       end        
-    elsif flash[:issorted] =~ /^release_date$/ 
+    elsif session[:issorted] =~ /^release_date$/ 
       if session[:selected_ratings].nil?
         @movies = Movie.find(:all,:order=>'release_date')
       else

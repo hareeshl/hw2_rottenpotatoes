@@ -11,12 +11,12 @@
 %table#movies
   %thead
     %tr
-      - if flash[:issorted] =~ /^title$/
+      - if session[:issorted] =~ /^title$/
         %th.hilite= link_to 'Movie Title', movie_path('title'),:id =>'title_header'
       -  else
         %th= link_to 'Movie Title', movie_path('title'),:id =>'title_header'
       %th Rating
-      - if flash[:issorted] =~ /^release_date$/
+      - if session[:issorted] =~ /^release_date$/
         %th.hilite= link_to 'Release Date',movie_path('release_date'),:id=>'release_date_header'
       - else
         %th= link_to 'Release Date',movie_path('release_date'),:id=>'release_date_header'  
