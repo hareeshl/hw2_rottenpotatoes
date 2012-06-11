@@ -17,7 +17,7 @@ class MoviesController < ApplicationController
 
   def index
 
-    @all_ratings = Movie.group(:rating)
+    @all_ratings = Movie.find(:all,:select =>"rating", :group=>:rating)
     
     unless params[:ratings].nil?
       session[:selected_ratings] = params[:ratings]
@@ -43,7 +43,6 @@ class MoviesController < ApplicationController
           @all_ratings.each do |rating|
             if rating == movieWithRating
                 rating.isChecked = true
-                puts rating.title
             end
           end 
         end 
